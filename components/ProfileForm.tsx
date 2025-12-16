@@ -3,12 +3,24 @@
 import { useActionState } from 'react'
 import { updateProfile } from '@/app/actions'
 
-const initialState = {
-  message: '',
-  error: '',
+// 1. Definisikan tipe data sesuai kolom di Supabase
+interface Profile {
+  id: string
+  full_name: string | null
+  address: string | null
+  ktp_number: string | null
+  avatar_url: string | null
+  updated_at: string | null
 }
 
-export default function ProfileForm({ profile }: { profile: any }) {
+// 2. Gunakan interface tersebut di props (ganti 'any')
+// Kita tambahkan '| null' untuk berjaga-jaga jika data belum siap
+export default function ProfileForm({ profile }: { profile: Profile | null }) {
+  const initialState = {
+    message: '',
+    error: '',
+  }
+
   const [state, formAction, isPending] = useActionState(updateProfile, initialState)
 
   return (
