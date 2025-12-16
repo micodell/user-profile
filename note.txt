@@ -1,0 +1,7 @@
+Buat website profile diri dimana:
+- user dapat registrasi yang datanya akan disimpan di Supabase
+- user setelah registrasi pada '/signup' dan login pada '/login' dapat memasukkan data-data seperti: nama, alamat, No KTP, dan upload foto pada '/'
+- untuk registrasi dan login gunakan Server Actions jangan menggunakan logikan client side
+- user dapat update datanya juga pada '/'
+- gunakan typescript
+- deploy ke vercel hingga mendapatkan link vercel yang bisa diakses dan user pakai
