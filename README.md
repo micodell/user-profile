@@ -9,3 +9,6 @@ Buat website profile diri dimana:
 
 ## Installation
 - `pnpm add @supabase/supabase-js @supabase/ssr`
+
+## Deployed (using Vercel)
+[user-profile-lzwhcolvr-michelles-projects-42c9c559.vercel.app](https://user-profile-lzwhcolvr-michelles-projects-42c9c559.vercel.app)
