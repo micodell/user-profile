@@ -4,7 +4,14 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-export async function login(formData: FormData) {
+// Tipe data standar untuk state form
+export type FormState = {
+  message?: string
+  error?: string
+}
+
+// Login: (Opsional) Saya update juga agar konsisten jika nanti mau pakai useFormState
+export async function login(prevState: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient()
   
   const email = formData.get('email') as string
@@ -23,7 +30,8 @@ export async function login(formData: FormData) {
   redirect('/')
 }
 
-export async function signup(formData: FormData) {
+// Signup: Ditambahkan parameter prevState
+export async function signup(prevState: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient()
   
   const email = formData.get('email') as string
@@ -45,29 +53,18 @@ export async function signup(formData: FormData) {
     return { error: error.message }
   }
 
-  // if (data.user) {
-  //   const { error: profileError } = await supabase
-  //       .from('profiles')
-  //       .insert({
-  //           id: data.user.id,
-  //           name: name,
-  //       })
-    
-  //   if (profileError) {
-  //       console.error('Profile Insert Error:', profileError)
-  //   }
-  // }
-
+  // Insert profile logic bisa ditaruh di sini atau via Trigger di Database (disarankan trigger)
+  
   revalidatePath('/', 'layout')
   redirect('/')
 }
 
-export async function updateProfile(formData: FormData) {
+// Update Profile: Ditambahkan parameter prevState
+export async function updateProfile(prevState: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient()
   
-  // Get current user
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return redirect('/')
+  if (!user) return { error: 'Unauthorized' }
 
   const name = formData.get('name') as string
   const address = formData.get('address') as string
@@ -75,6 +72,7 @@ export async function updateProfile(formData: FormData) {
   const file = formData.get('avatar') as File
   let avatarUrl = formData.get('currentAvatarUrl') as string
 
+  // Handle Upload Avatar
   if (file && file.size > 0) {
     const fileName = `${user.id}-${Date.now()}`
     const { error: uploadError } = await supabase.storage
@@ -88,7 +86,6 @@ export async function updateProfile(formData: FormData) {
       avatarUrl = publicUrl
     }
   }
-
   
   const { error } = await supabase
     .from('profiles')
@@ -107,7 +104,7 @@ export async function updateProfile(formData: FormData) {
   }
 
   revalidatePath('/')
-  return { message: 'Success' }
+  return { message: 'Profile updated successfully' }
 }
 
 export async function signOut() {
